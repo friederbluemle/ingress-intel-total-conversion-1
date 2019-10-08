@@ -33,15 +33,16 @@ android {
             storeFile file("../keystore/debug.keystore")
         }
         release {
+            def keystorePropertiesFile = rootProject.file("keystore.properties")
             if (System.getenv("TRAVIS")) {
                 storeFile file("../keystore/android.jks")
                 storePassword System.getenv("KEYSTORE_PASS")
                 keyAlias System.getenv("ALIAS_NAME")
                 keyPassword System.getenv("ALIAS_PASS")
-            } else {
+            } else if (keystorePropertiesFile.exists()) {
                 // We use keystore.properties file for signing data.
                 def keystoreProperties = new Properties()
-                keystoreProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
